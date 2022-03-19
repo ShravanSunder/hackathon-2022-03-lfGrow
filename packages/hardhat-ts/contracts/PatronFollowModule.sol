@@ -9,7 +9,7 @@ import { FollowValidatorFollowModuleBase } from "./lens-protocol/core/modules/fo
 
 // test profile address: 0xb212a727DD414c9cc309F7C663c5753D170AFF28
 
-contract PatronFollowModule is IFollowModule, FeeModuleBase {
+contract PatronFollowModule is IFollowModule, FeeModuleBase, FollowValidatorFollowModuleBase {
   string public purpose = "Building Unstoppable Apps!!!";
 
   constructor(address hub, address globals) ModuleBase(hub) FeeModuleBase(globals) {
