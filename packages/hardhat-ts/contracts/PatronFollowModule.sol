@@ -8,38 +8,62 @@ import { Errors } from "./lens-protocol/libraries/Errors.sol";
 import { Events } from "./lens-protocol/libraries/Events.sol";
 import { FeeModuleBase } from "./lens-protocol/core/modules/FeeModuleBase.sol";
 import { FollowValidatorFollowModuleBase } from "./lens-protocol/core/modules/follow/FollowValidatorFollowModuleBase.sol";
+
+import { ILensHub } from "./lens-protocol/interfaces/ILensHub.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 library PatronFollowErrors {
   error TransferNotAllowed();
   error NotImplemented();
+  error InvalidCurrency();
+  error PaymentInvalidFollowNotValid();
+  error PaymentInvalidAmountNotValid();
+  error SubscriptionExpired();
+  error SubscriptionInvalid();
 }
 
 // test profile address: 0xb212a727DD414c9cc309F7C663c5753D170AFF28
 
-contract PatronFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
+contract PatronFollowModule is IFollowModule, ModuleBase {
   string public purpose = "Patron Follower Module for Lens Protocol";
+  address immutable POLYGON_DAI = 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063;
+  using SafeERC20 for IERC20;
 
-  struct Membership {
+  struct MembershipLevel {
     uint32 id;
     string name;
     string dataUrl;
-    uint256 amount;
+    uint256 minAmount;
   }
 
   struct FollowerData {
     address followerAddress;
+    uint256 lastPaymentAmount;
+    uint256 lastPaymentTimestamp;
+  }
+
+  struct ProfileData {
+    uint256 profileId;
+    address profileAddress;
+    mapping(uint32 => MembershipLevel) membershipLevels;
+    mapping(address => FollowerData) followers;
+    uint256 miniumSubscriptionAmount;
+  }
+
+  mapping(uint256 => ProfileData) public _profiles;
+
+  struct PaymentHistory {
+    uint256 timestamp;
     uint256 amount;
   }
 
-  struct Profile {
-    uint256 profileId;
-    address profileAddress;
-    mapping(uint32 => Membership) memberships;
-    mapping(address => FollowerData) followers;
+  struct ProfileDataExtra {
+    uint256 profileAddress;
+    PaymentHistory[] paymentHistory;
   }
-
-  mapping(uint256 => Profile) public _profiles;
+  mapping(uint256 => ProfileDataExtra) public _profilesExtra;
 
   constructor(address hub) ModuleBase(hub) {
     // what should we do on deploy?j
@@ -64,7 +88,29 @@ contract PatronFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     uint256 amount
   ) external {
     assertProfileOwner(profileId);
-    _profiles[profileId].memberships[id] = Membership({ id: id, name: name, dataUrl: dataUrl, amount: amount });
+    _profiles[profileId].membershipLevels[id] = MembershipLevel({ id: id, name: name, dataUrl: dataUrl, minAmount: amount });
+  }
+
+  function processPayment(
+    uint256 profileId,
+    address followerAddress,
+    uint256 amount
+  ) public {
+    FollowerData memory follow = _profiles[profileId].followers[followerAddress];
+    if (follow.followerAddress == address(0)) {
+      revert PatronFollowErrors.PaymentInvalidFollowNotValid();
+    }
+
+    address recipient = _profiles[profileId].profileAddress;
+    IERC20(POLYGON_DAI).safeTransferFrom(followerAddress, recipient, amount);
+    (followerAddress, recipient, amount);
+
+    follow.lastPaymentAmount = amount;
+    follow.lastPaymentTimestamp = block.timestamp;
+
+    _profilesExtra[profileId].paymentHistory.push(PaymentHistory({ timestamp: follow.lastPaymentTimestamp, amount: follow.lastPaymentAmount }));
+
+    _profiles[profileId].followers[followerAddress] = follow;
   }
 
   function processFollow(
@@ -73,9 +119,49 @@ contract PatronFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     bytes calldata data
   ) external override {
     (address currencyAddress, uint256 amount) = abi.decode(data, (address, uint256));
-    FollowerData memory follower = FollowerData({ followerAddress: followerAddress, amount: amount });
+    if (currencyAddress != POLYGON_DAI) revert PatronFollowErrors.InvalidCurrency();
 
-    _profiles[profileId].followers[followerAddress] = follower;
+    if (_profiles[profileId].followers[followerAddress].followerAddress == address(0)) {
+      _profiles[profileId].followers[followerAddress];
+    }
+    processPayment(profileId, followerAddress, amount);
+  }
+
+  function isFollowerActive(uint256 profileId, address followerAddress) public view returns (bool) {
+    bool result = block.timestamp - _profiles[profileId].followers[followerAddress].lastPaymentTimestamp <= 32 days;
+    return result;
+  }
+
+  function assertSubscriptionValid(uint256 profileId, address followerAddress) public view {
+    if (_profiles[profileId].miniumSubscriptionAmount > _profiles[profileId].followers[followerAddress].lastPaymentAmount) {
+      // check that follower has paid enough
+      revert PatronFollowErrors.SubscriptionInvalid();
+    }
+    if (isFollowerActive(profileId, followerAddress)) {
+      revert PatronFollowErrors.SubscriptionExpired();
+    }
+  }
+
+  /**
+   * @notice Standard function to validate follow NFT ownership. This module is agnostic to follow NFT token IDs
+   * and other properties.
+   */
+  function validateFollow(
+    uint256 profileId,
+    address followerAddress,
+    uint256 followNFTTokenId
+  ) external view override {
+    address followNFT = ILensHub(HUB).getFollowNFT(profileId);
+    if (followNFT == address(0)) revert Errors.FollowInvalid();
+    if (followNFTTokenId == 0) {
+      // check that follower owns a followNFT
+      if (IERC721(followNFT).balanceOf(followerAddress) == 0) revert Errors.FollowInvalid();
+    } else {
+      // check that follower owns the specific followNFT
+      if (IERC721(followNFT).ownerOf(followNFTTokenId) != followerAddress) revert Errors.FollowInvalid();
+    }
+
+    assertSubscriptionValid(profileId, followerAddress);
   }
 
   function followModuleTransferHook(
