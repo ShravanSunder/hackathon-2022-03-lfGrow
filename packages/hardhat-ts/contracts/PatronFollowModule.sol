@@ -45,7 +45,7 @@ contract PatronFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     // what should we do on deploy?j
   }
 
-  function assertProfileOwner(uint256 profileId) internal pure {
+  function assertProfileOwner(uint256 profileId) internal {
     address owner = IERC721(HUB).ownerOf(profileId);
     if (msg.sender != owner) revert Errors.NotProfileOwner();
   }
@@ -71,12 +71,11 @@ contract PatronFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     address followerAddress,
     uint256 profileId,
     bytes calldata data
-  ) external view override {
-    FollowerData memory data;
-    (address _, uint256 amount) = abi.decode(data, (address, uint256));
-    data = FollowerData({ followerAddress: followerAddress, amount: amount });
+  ) external override {
+    (address currencyAddress, uint256 amount) = abi.decode(data, (address, uint256));
+    FollowerData memory follower = FollowerData({ followerAddress: followerAddress, amount: amount });
 
-    _profiles[profileId].followers[followerAddress] = data;
+    _profiles[profileId].followers[followerAddress] = follower;
   }
 
   function followModuleTransferHook(
