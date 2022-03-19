@@ -58,5 +58,5 @@
    "[solidity]": {
      "editor.defaultFormatter": "JuanBlanco.solidity"
    },
-   "solidity.defaultCompiler": "localNodeModule"
+   "solidity.defaultCompiler": "localFile"
 }
