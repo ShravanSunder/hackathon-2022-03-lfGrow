@@ -18,8 +18,8 @@ library PatronFollowErrors {
   error TransferNotAllowed();
   error NotImplemented();
   error InvalidCurrency();
-  error PaymentInvalidFollowNotValid();
-  error PaymentInvalidAmountNotValid();
+  error InvalidFollowerForProfile();
+  error SubscriptionPaymentAmountNotValid();
   error SubscriptionExpired();
   error SubscriptionInvalid();
 }
@@ -69,17 +69,34 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     // what should we do on deploy?j
   }
 
-  function assertProfileOwner(uint256 profileId) internal {
+  /********* Assert ************/
+
+  function assertProfileOwner(uint256 profileId) internal view {
     address owner = IERC721(HUB).ownerOf(profileId);
     if (msg.sender != owner) revert Errors.NotProfileOwner();
   }
 
-  function initializeFollowModule(uint256 profileId, bytes calldata data) external override onlyHub returns (bytes memory) {
-    address owner = IERC721(HUB).ownerOf(profileId);
-    _profiles[profileId].profileId = profileId;
-    _profiles[profileId].profileAddress = owner;
+  function assertSubscriptionValid(uint256 profileId, address followerAddress) public view {
+    if (_profiles[profileId].miniumSubscriptionAmount > _profiles[profileId].followers[followerAddress].lastPaymentAmount) {
+      // check that follower has paid enough
+      revert PatronFollowErrors.SubscriptionInvalid();
+    }
+    if (isFollowerActive(profileId, followerAddress)) {
+      revert PatronFollowErrors.SubscriptionExpired();
+    }
   }
 
+  /********** Helpers ********** */
+  function isFollowerActive(uint256 profileId, address followerAddress) public view returns (bool) {
+    bool result = block.timestamp - _profiles[profileId].followers[followerAddress].lastPaymentTimestamp <= 32 days;
+    return result;
+  }
+
+  /********** Patron Functions *****/
+
+  /**
+   * @notice Set or update a membership level for a profile
+   */
   function setMemberships(
     uint256 profileId,
     uint32 id,
@@ -91,6 +108,9 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     _profiles[profileId].membershipLevels[id] = MembershipLevel({ id: id, name: name, dataUrl: dataUrl, minAmount: amount });
   }
 
+  /**
+   * @notice Process payment for a profile from a follower
+   */
   function processPayment(
     uint256 profileId,
     address followerAddress,
@@ -98,7 +118,9 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   ) public {
     FollowerData memory follow = _profiles[profileId].followers[followerAddress];
     if (follow.followerAddress == address(0)) {
-      revert PatronFollowErrors.PaymentInvalidFollowNotValid();
+      revert PatronFollowErrors.InvalidFollowerForProfile();
+    } else if (amount < _profiles[profileId].miniumSubscriptionAmount) {
+      revert PatronFollowErrors.SubscriptionPaymentAmountNotValid();
     }
 
     address recipient = _profiles[profileId].profileAddress;
@@ -113,6 +135,14 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     _profiles[profileId].followers[followerAddress] = follow;
   }
 
+  /********** Lens Protocol Primitives ***********/
+
+  function initializeFollowModule(uint256 profileId, bytes calldata data) external override onlyHub returns (bytes memory) {
+    address owner = IERC721(HUB).ownerOf(profileId);
+    _profiles[profileId].profileId = profileId;
+    _profiles[profileId].profileAddress = owner;
+  }
+
   function processFollow(
     address followerAddress,
     uint256 profileId,
@@ -125,21 +155,6 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
       _profiles[profileId].followers[followerAddress];
     }
     processPayment(profileId, followerAddress, amount);
-  }
-
-  function isFollowerActive(uint256 profileId, address followerAddress) public view returns (bool) {
-    bool result = block.timestamp - _profiles[profileId].followers[followerAddress].lastPaymentTimestamp <= 32 days;
-    return result;
-  }
-
-  function assertSubscriptionValid(uint256 profileId, address followerAddress) public view {
-    if (_profiles[profileId].miniumSubscriptionAmount > _profiles[profileId].followers[followerAddress].lastPaymentAmount) {
-      // check that follower has paid enough
-      revert PatronFollowErrors.SubscriptionInvalid();
-    }
-    if (isFollowerActive(profileId, followerAddress)) {
-      revert PatronFollowErrors.SubscriptionExpired();
-    }
   }
 
   /**
