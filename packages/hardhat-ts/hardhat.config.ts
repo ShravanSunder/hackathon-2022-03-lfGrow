@@ -109,20 +109,20 @@ const config: HardhatUserConfig = {
     },
     xdai: {
       url: 'https://rpc.xdaichain.com/',
-      gasPrice: 1000000000,
+      gasPrice: 1100000000,
       accounts: {
         mnemonic: getMnemonic(),
       },
     },
     matic: {
       url: 'https://rpc-mainnet.maticvigil.com/',
-      gasPrice: 1000000000,
+      gasPrice: 1100000000,
       accounts: {
         mnemonic: getMnemonic(),
       },
     },
     mumbai: {
-      gasPrice: 1000000000,
+      gasPrice: 1100000000,
       url: 'https://rpc-mumbai.maticvigil.com',
       accounts: {
         mnemonic: getMnemonic(),
