@@ -15,6 +15,8 @@ import { TExternalContractsAddressMap } from 'eth-hooks/models';
 export const externalContractsAddressMap: TExternalContractsAddressMap = {
   [NetworkID.MAINNET]: {
     DAI: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    // LENS_HUB: '0x7c86e2a63941442462cce73EcA9F07F4Ad023261',
+  },
+  [NetworkID.POLYGON_MUMBAI]: {
+    LENS_HUB: '0xd7B3481De00995046C7850bCe9a5196B7605c367',
   },
 };

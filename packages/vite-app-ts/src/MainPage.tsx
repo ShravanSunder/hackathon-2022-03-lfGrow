@@ -3,11 +3,11 @@ import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
 import '~~/styles/main-page.css';
 
-import { GenericContract } from 'eth-components/ant/generic-contract';
 import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
 import { useEthersContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
+import { GenericContract } from 'eth-components/ant/generic-contract';
 
 import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
@@ -157,7 +157,7 @@ export const Main: FC = () => {
           </Route>
           <Route exact path="/lens-hub">
             <GenericContract
-              contractName="ProfileFollowContract"
+              contractName="Lens Hub"
               contract={lensHub}
               mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
               blockExplorer={scaffoldAppProviders.targetNetwork.blockExplorer}
