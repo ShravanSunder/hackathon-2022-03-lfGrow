@@ -121,6 +121,13 @@ const config: HardhatUserConfig = {
         mnemonic: getMnemonic(),
       },
     },
+    mumbai: {
+      gasPrice: 1000000000,
+      url: 'https://rpc-mumbai.maticvigil.com',
+      accounts: {
+        mnemonic: getMnemonic(),
+      },
+    },
   },
   solidity: {
     compilers: [
