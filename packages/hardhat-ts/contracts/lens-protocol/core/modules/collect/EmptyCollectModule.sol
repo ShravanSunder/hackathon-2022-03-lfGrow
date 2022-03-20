@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.10;
 
-import {ICollectModule} from '../../../interfaces/ICollectModule.sol';
-import {ModuleBase} from '../ModuleBase.sol';
-import {FollowValidationModuleBase} from '../FollowValidationModuleBase.sol';
+import { ICollectModule } from "../../../interfaces/ICollectModule.sol";
+import { ModuleBase } from "../ModuleBase.sol";
+import { FollowValidationModuleBase } from "../FollowValidationModuleBase.sol";
 
 /**
  * @title EmptyCollectModule
@@ -15,30 +15,30 @@ import {FollowValidationModuleBase} from '../FollowValidationModuleBase.sol';
  * This module works by allowing all collects by followers.
  */
 contract EmptyCollectModule is ICollectModule, FollowValidationModuleBase {
-    constructor(address hub) ModuleBase(hub) {}
+  constructor(address hub) ModuleBase(hub) {}
 
-    /**
-     * @dev There is nothing needed at initialization.
-     */
-    function initializePublicationCollectModule(
-        uint256 profileId,
-        uint256 pubId,
-        bytes calldata data
-    ) external pure override returns (bytes memory) {
-        return new bytes(0);
-    }
+  /**
+   * @dev There is nothing needed at initialization.
+   */
+  function initializePublicationCollectModule(
+    uint256 profileId,
+    uint256 pubId,
+    bytes calldata data
+  ) external pure override returns (bytes memory) {
+    return new bytes(0);
+  }
 
-    /**
-     * @dev Processes a collect by:
-     *  1. Ensuring the collector is a follower
-     */
-    function processCollect(
-        uint256 referrerProfileId,
-        address collector,
-        uint256 profileId,
-        uint256 pubId,
-        bytes calldata data
-    ) external view override {
-        _checkFollowValidity(profileId, collector);
-    }
+  /**
+   * @dev Processes a collect by:
+   *  1. Ensuring the collector is a follower
+   */
+  function processCollect(
+    uint256 referrerProfileId,
+    address collector,
+    uint256 profileId,
+    uint256 pubId,
+    bytes calldata data
+  ) external view override {
+    _checkFollowValidity(profileId, collector);
+  }
 }

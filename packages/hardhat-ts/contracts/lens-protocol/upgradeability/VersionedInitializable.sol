@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.10;
 
-import {Errors} from '../libraries/Errors.sol';
+import { Errors } from "../libraries/Errors.sol";
 
 /**
  * @title VersionedInitializable
@@ -21,31 +21,31 @@ import {Errors} from '../libraries/Errors.sol';
  * Initializable contract
  */
 abstract contract VersionedInitializable {
-    address private immutable originalImpl;
+  address private immutable originalImpl;
 
-    /**
-     * @dev Indicates that the contract has been initialized.
-     */
-    uint256 private lastInitializedRevision = 0;
+  /**
+   * @dev Indicates that the contract has been initialized.
+   */
+  uint256 private lastInitializedRevision = 0;
 
-    /**
-     * @dev Modifier to use in the initializer function of a contract.
-     */
-    modifier initializer() {
-        uint256 revision = getRevision();
-        if (address(this) == originalImpl) revert Errors.CannotInitImplementation();
-        if (revision <= lastInitializedRevision) revert Errors.Initialized();
-        lastInitializedRevision = revision;
-        _;
-    }
+  /**
+   * @dev Modifier to use in the initializer function of a contract.
+   */
+  modifier initializer() {
+    uint256 revision = getRevision();
+    if (address(this) == originalImpl) revert Errors.CannotInitImplementation();
+    if (revision <= lastInitializedRevision) revert Errors.Initialized();
+    lastInitializedRevision = revision;
+    _;
+  }
 
-    constructor() {
-        originalImpl = address(this);
-    }
+  constructor() {
+    originalImpl = address(this);
+  }
 
-    /**
-     * @dev returns the revision number of the contract
-     * Needs to be defined in the inherited class as a constant.
-     **/
-    function getRevision() internal pure virtual returns (uint256);
+  /**
+   * @dev returns the revision number of the contract
+   * Needs to be defined in the inherited class as a constant.
+   **/
+  function getRevision() internal pure virtual returns (uint256);
 }

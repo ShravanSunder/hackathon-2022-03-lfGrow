@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.10;
 
-import {Events} from '../../libraries/Events.sol';
-import {DataTypes} from '../../libraries/DataTypes.sol';
-import {Errors} from '../../libraries/Errors.sol';
+import { Events } from "../../libraries/Events.sol";
+import { DataTypes } from "../../libraries/DataTypes.sol";
+import { Errors } from "../../libraries/Errors.sol";
 
 /**
  * @title LensMultiState
@@ -15,38 +15,38 @@ import {Errors} from '../../libraries/Errors.sol';
  * whenPublishingEnabled: When Unpaused only.
  */
 abstract contract LensMultiState {
-    DataTypes.ProtocolState private _state;
+  DataTypes.ProtocolState private _state;
 
-    modifier whenNotPaused() {
-        _validateNotPaused();
-        _;
-    }
+  modifier whenNotPaused() {
+    _validateNotPaused();
+    _;
+  }
 
-    modifier whenPublishingEnabled() {
-        _validatePublishingEnabled();
-        _;
-    }
+  modifier whenPublishingEnabled() {
+    _validatePublishingEnabled();
+    _;
+  }
 
-    /**
-     * @dev Returns the current protocol state.
-     */
-    function getState() external view returns (DataTypes.ProtocolState) {
-        return _state;
-    }
+  /**
+   * @dev Returns the current protocol state.
+   */
+  function getState() external view returns (DataTypes.ProtocolState) {
+    return _state;
+  }
 
-    function _setState(DataTypes.ProtocolState newState) internal {
-        DataTypes.ProtocolState prevState = _state;
-        _state = newState;
-        emit Events.StateSet(msg.sender, prevState, newState, block.timestamp);
-    }
+  function _setState(DataTypes.ProtocolState newState) internal {
+    DataTypes.ProtocolState prevState = _state;
+    _state = newState;
+    emit Events.StateSet(msg.sender, prevState, newState, block.timestamp);
+  }
 
-    function _validatePublishingEnabled() internal view {
-        if (_state != DataTypes.ProtocolState.Unpaused) {
-            revert Errors.PublishingPaused();
-        }
+  function _validatePublishingEnabled() internal view {
+    if (_state != DataTypes.ProtocolState.Unpaused) {
+      revert Errors.PublishingPaused();
     }
+  }
 
-    function _validateNotPaused() internal view {
-        if (_state == DataTypes.ProtocolState.Paused) revert Errors.Paused();
-    }
+  function _validateNotPaused() internal view {
+    if (_state == DataTypes.ProtocolState.Paused) revert Errors.Paused();
+  }
 }
