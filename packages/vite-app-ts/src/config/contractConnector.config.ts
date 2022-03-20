@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { createConnectorForExternalContract, createConnectorForHardhatContract } from 'eth-hooks/context';
+import {
+  createConnectorForExternalAbi,
+  createConnectorForExternalContract,
+  createConnectorForHardhatContract,
+} from 'eth-hooks/context';
 
 import hardhatContractsJson from '../generated/hardhat_contracts.json';
 
 import { externalContractsAddressMap } from './externalContracts.config';
 
+import { TARGET_NETWORK_INFO } from '~~/config/app.config';
 import * as hardhatContracts from '~~/generated/contract-types';
 import * as externalContracts from '~~/generated/external-contracts/esm/types';
 
@@ -29,12 +34,23 @@ export const contractConnectorConfig = () => {
         hardhatContracts.PatronFollowModule__factory,
         hardhatContractsJson
       ),
+      // LensHub: createConnectorForHardhatContract('LensHub', hardhatContracts.LensHub__factory, hardhatContractsJson),
 
       // 🙋🏽‍♂️ Add your external contracts here, make sure to define the address in `externalContractsConfig.ts`
       DAI: createConnectorForExternalContract('DAI', externalContracts.DAI__factory, externalContractsAddressMap),
+      // LENS_HUB: createConnectorForExternalContract('LENS_HUB', externalContracts, externalContractsAddressMap),
 
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`
-      // DAI: createConnectorForExternalAbi('DAI', { 1: {address: 'xxxx'}}, abi),
+      LENS_HUB: createConnectorForExternalAbi(
+        'LENS_HUB',
+        {
+          [TARGET_NETWORK_INFO.chainId]: {
+            address: '0x7c86e2a63941442462cce73EcA9F07F4Ad023261',
+            chainId: TARGET_NETWORK_INFO.chainId,
+          },
+        },
+        hardhatContracts.LensHub__factory.abi
+      ),
     } as const;
 
     return result;

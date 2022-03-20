@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
 import '~~/styles/main-page.css';
 
@@ -9,15 +9,16 @@ import { useEthersContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 
-import { MainPageMenu, MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
+import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
 
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/components/contractContext';
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-import { Hints } from '~~/components/pages';
 import { BURNER_FALLBACK_ENABLED, MAINNET_PROVIDER } from '~~/config/app.config';
 import { NETWORKS } from '~~/models/constants/networks';
+
+import { Menu } from 'antd';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -28,6 +29,57 @@ import { NETWORKS } from '~~/models/constants/networks';
  *
  * For more
  */
+
+export interface IMainPageMenuProps {
+  route: string;
+  setRoute: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const MainPageMenu: FC<IMainPageMenuProps> = (props) => (
+  <Menu
+    style={{
+      textAlign: 'center',
+    }}
+    selectedKeys={[props.route]}
+    mode="horizontal">
+    <Menu.Item key="/">
+      <Link
+        onClick={(): void => {
+          props.setRoute('/');
+        }}
+        to="/">
+        PatronFollowModule
+      </Link>
+    </Menu.Item>
+    <Menu.Item key="/lens-hub">
+      <Link
+        onClick={(): void => {
+          props.setRoute('/lens-hub');
+        }}
+        to="/lens-hub">
+        TestProfileModule
+      </Link>
+    </Menu.Item>
+    <Menu.Item key="/mainnetdai">
+      <Link
+        onClick={(): void => {
+          props.setRoute('/mainnetdai');
+        }}
+        to="/mainnetdai">
+        Mainnet DAI
+      </Link>
+    </Menu.Item>
+    {/* <Menu.Item key="/subgraph">
+      <Link
+        onClick={() => {
+          props.setRoute('/subgraph');
+        }}
+        to="/subgraph">
+        Subgraph
+      </Link>
+    </Menu.Item> */}
+  </Menu>
+);
 
 /**
  * The main component
@@ -72,6 +124,7 @@ export const Main: FC = () => {
 
   // init contracts
   const patronFollowModule = useAppContracts('PatronFollowModule', ethersContext.chainId);
+  const lensHub = useAppContracts('LENS_HUB', ethersContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 
   // keep track of a variable from the contract in the local React state:
@@ -102,13 +155,12 @@ export const Main: FC = () => {
           <Route exact path="/">
             <MainPageContracts scaffoldAppProviders={scaffoldAppProviders} />
           </Route>
-          {/* you can add routes here like the below examlples */}
-          <Route path="/hints">
-            <Hints
-              address={ethersContext?.account ?? ''}
-              yourCurrentBalance={yourCurrentBalance}
-              mainnetProvider={scaffoldAppProviders.mainnetAdaptor?.provider}
-              price={ethPrice}
+          <Route exact path="/lens-hub">
+            <GenericContract
+              contractName="ProfileFollowContract"
+              contract={lensHub}
+              mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
+              blockExplorer={scaffoldAppProviders.targetNetwork.blockExplorer}
             />
           </Route>
           <Route path="/mainnetdai">
@@ -121,12 +173,6 @@ export const Main: FC = () => {
               />
             )}
           </Route>
-          {/* Subgraph also disabled in MainPageMenu, it does not work, see github issue! */}
-          {/*
-          <Route path="/subgraph">
-            <Subgraph subgraphUri={subgraphUri} mainnetProvider={scaffoldAppProviders.mainnetAdaptor?.provider} />
-          </Route>
-          */}
         </Switch>
       </BrowserRouter>
 

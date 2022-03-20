@@ -19,7 +19,7 @@ export interface IMainPageContractsProps {
 export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
   const ethersContext = useEthersContext();
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
-  const yourContract = useAppContracts('PatronFollowModule', ethersContext.chainId);
+  const patronFollow = useAppContracts('PatronFollowModule', ethersContext.chainId);
 
   if (ethersContext.account == null) {
     return <></>;
@@ -35,7 +35,7 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
         ********** */}
         <GenericContract
           contractName="ProfileFollowContract"
-          contract={yourContract}
+          contract={patronFollow}
           mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
           blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
         />
