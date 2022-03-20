@@ -3,7 +3,7 @@ import { createConnectorForExternalContract, createConnectorForHardhatContract }
 
 import hardhatContractsJson from '../generated/hardhat_contracts.json';
 
-import { externalContractsAddressMap } from './externalContractsConfig';
+import { externalContractsAddressMap } from './externalContracts.config';
 
 import * as hardhatContracts from '~~/generated/contract-types';
 import * as externalContracts from '~~/generated/external-contracts/esm/types';
@@ -24,15 +24,14 @@ export const contractConnectorConfig = () => {
   try {
     const result = {
       // 🙋🏽‍♂️ Add your hadrdhat contracts here
-      YourContract: createConnectorForHardhatContract(
-        'YourContract',
-        hardhatContracts.YourContract__factory,
+      PatronFollowModule: createConnectorForHardhatContract(
+        'PatronFollowModule',
+        hardhatContracts.PatronFollowModule__factory,
         hardhatContractsJson
       ),
 
       // 🙋🏽‍♂️ Add your external contracts here, make sure to define the address in `externalContractsConfig.ts`
       DAI: createConnectorForExternalContract('DAI', externalContracts.DAI__factory, externalContractsAddressMap),
-      UNI: createConnectorForExternalContract('UNI', externalContracts.UNI__factory, externalContractsAddressMap),
 
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`
       // DAI: createConnectorForExternalAbi('DAI', { 1: {address: 'xxxx'}}, abi),

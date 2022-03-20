@@ -1,6 +1,6 @@
 import { ICoreOptions } from 'web3modal';
 
-import { LOCAL_PROVIDER } from '~~/config/appConfig';
+import { LOCAL_PROVIDER } from '~~/config/app.config';
 import { NETWORKS } from '~~/models/constants/networks';
 
 const INFURA_ID = import.meta.env.VITE_KEY_INFURA;

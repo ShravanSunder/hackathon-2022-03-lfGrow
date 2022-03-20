@@ -2,8 +2,8 @@ import { GenericContract } from 'eth-components/ant/generic-contract';
 import { useEthersContext } from 'eth-hooks/context';
 import React, { FC } from 'react';
 
+import { useAppContracts } from '~~/components/contractContext';
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-import { useAppContracts } from '~~/config/contractContext';
 import { NETWORKS } from '~~/models/constants/networks';
 export interface IMainPageContractsProps {
   scaffoldAppProviders: IScaffoldAppProviders;
@@ -19,7 +19,7 @@ export interface IMainPageContractsProps {
 export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
   const ethersContext = useEthersContext();
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
-  const yourContract = useAppContracts('YourContract', ethersContext.chainId);
+  const yourContract = useAppContracts('PatronFollowModule', ethersContext.chainId);
 
   if (ethersContext.account == null) {
     return <></>;

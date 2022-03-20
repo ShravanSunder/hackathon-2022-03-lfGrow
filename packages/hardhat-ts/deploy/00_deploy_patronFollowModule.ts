@@ -8,6 +8,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   await deploy('PatronFollowModule', {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
+    // see https://docs.lens.dev/docs/testnet-addresses#mumbai-testnet-addresses
     args: ['0x7c86e2a63941442462cce73EcA9F07F4Ad023261'],
     log: true,
   });
