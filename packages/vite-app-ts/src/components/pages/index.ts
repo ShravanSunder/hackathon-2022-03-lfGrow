@@ -4,3 +4,4 @@ import { lazier } from 'eth-hooks/helpers';
 // code is in the component file
 
 export const Hints = lazier(() => import('./hints/Hints'), 'Hints');
+export const Profile = lazier(() => import('./profile/Profile'), 'Profile');

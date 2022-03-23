@@ -44,6 +44,7 @@
     "authereum": "^0.1.14",
     "axios": "^0.25.0",
     "buffer": "^6.0.3",
+    "daisyui": "^2.11.1",
     "eth-components": "3.0.41",
     "eth-hooks": "4.0.45",
     "ethereum-cryptography": "^0.1.3",

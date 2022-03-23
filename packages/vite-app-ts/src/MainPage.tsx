@@ -1,24 +1,23 @@
+import { Menu } from 'antd';
+import { GenericContract } from 'eth-components/ant/generic-contract';
+import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
+import { useEthersContext } from 'eth-hooks/context';
+import { useDexEthPrice } from 'eth-hooks/dapps';
+import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
 import '~~/styles/main-page.css';
 
-import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
-import { useEthersContext } from 'eth-hooks/context';
-import { useDexEthPrice } from 'eth-hooks/dapps';
-import { asEthersAdaptor } from 'eth-hooks/functions';
-import { GenericContract } from 'eth-components/ant/generic-contract';
-
 import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
+import { Profile } from './components/pages';
 
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/components/contractContext';
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { BURNER_FALLBACK_ENABLED, MAINNET_PROVIDER } from '~~/config/app.config';
 import { NETWORKS } from '~~/models/constants/networks';
-
-import { Menu } from 'antd';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -48,6 +47,15 @@ export const MainPageMenu: FC<IMainPageMenuProps> = (props) => (
           props.setRoute('/');
         }}
         to="/">
+        Profile
+      </Link>
+    </Menu.Item>
+    <Menu.Item key="/follow-module">
+      <Link
+        onClick={(): void => {
+          props.setRoute('/follow-module');
+        }}
+        to="/follow-module">
         PatronFollowModule
       </Link>
     </Menu.Item>
@@ -152,7 +160,10 @@ export const Main: FC = () => {
       <BrowserRouter>
         <MainPageMenu route={route} setRoute={setRoute} />
         <Switch>
-          <Route exact path="/">
+          <Route path="/">
+            <Profile></Profile>
+          </Route>
+          <Route exact path="/follow-module">
             <MainPageContracts scaffoldAppProviders={scaffoldAppProviders} />
           </Route>
           <Route exact path="/lens-hub">
