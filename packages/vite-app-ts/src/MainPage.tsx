@@ -160,7 +160,7 @@ export const Main: FC = () => {
       <BrowserRouter>
         <MainPageMenu route={route} setRoute={setRoute} />
         <Switch>
-          <Route path="/">
+          <Route exact path="/">
             <Profile></Profile>
           </Route>
           <Route exact path="/follow-module">
