@@ -18,9 +18,10 @@ import '@tenderly/hardhat-tenderly';
 import 'hardhat-deploy';
 import 'solidity-coverage';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import glob from 'glob';
 
 import { Provider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
 
@@ -31,6 +32,11 @@ import { create } from 'ipfs-http-client';
 
 import { config as envConfig } from 'dotenv';
 envConfig({ path: '../vite-app-ts/.env' });
+
+// load all tasks
+glob.sync('./tasks/*.ts').forEach((file: string) => {
+  require(path.resolve(file));
+});
 
 /**
  * Set your target network!!!
@@ -148,7 +154,7 @@ const config: HardhatUserConfig = {
     deployments: './generated/deployments',
   },
   typechain: {
-    outDir: '../vite-app-ts/src/generated/contract-types',
+    outDir: './generated/contract-types',
   },
 };
 export default config;
