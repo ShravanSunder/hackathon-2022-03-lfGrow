@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { createConnectorForExternalContract, createConnectorForHardhatContract } from 'eth-hooks/context';
+import {
+  createConnectorForExternalContract,
+  createConnectorForHardhatContract,
+  createConnectorForExternalAbi,
+} from 'eth-hooks/context';
 
 import hardhatContractsJson from '../generated/hardhat_contracts.json';
 
 import { externalContractsAddressMap } from './externalContracts.config';
 
+import { TARGET_NETWORK_INFO } from '~~/config/app.config';
 import * as hardhatContracts from '~~/generated/contract-types';
 import * as externalContracts from '~~/generated/external-contracts/esm/types';
 
@@ -20,7 +25,7 @@ import * as externalContracts from '~~/generated/external-contracts/esm/types';
  * - called  by useAppContracts
  * @returns
  */
-export const contractConnectorConfig = () => {
+export const appContractsConfig = () => {
   try {
     const result = {
       // 🙋🏽‍♂️ Add your hadrdhat contracts here
@@ -33,23 +38,24 @@ export const contractConnectorConfig = () => {
 
       // 🙋🏽‍♂️ Add your external contracts here, make sure to define the address in `externalContractsConfig.ts`
       DAI: createConnectorForExternalContract('DAI', externalContracts.DAI__factory, externalContractsAddressMap),
-      LENS_HUB: createConnectorForExternalContract(
-        'LENS_HUB',
-        externalContracts.LENSHUB__factory,
-        externalContractsAddressMap
-      ),
+      // LENS_HUB: createConnectorForExternalContract(
+      //   'LENS_HUB',
+      //   externalContracts.LENSHUB__factory,
+      //   externalContractsAddressMap
+      // ),
 
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`
-      // LENS_HUB: createConnectorForExternalAbi(
-      //   'LENS_HUB',
-      //   {
-      //     [TARGET_NETWORK_INFO.chainId]: {
-      //       address: '0x7c86e2a63941442462cce73EcA9F07F4Ad023261',
-      //       chainId: TARGET_NETWORK_INFO.chainId,
-      //     },
-      //   },
-      //   hardhatContracts.LensHub__factory.abi
-      // ),
+      LENS_HUB: createConnectorForExternalAbi(
+        'LENS_HUB',
+        {
+          [TARGET_NETWORK_INFO.chainId]: {
+            address: '0xD036a8F254ef782cb93af4F829A1568E992c3864',
+            chainId: TARGET_NETWORK_INFO.chainId,
+          },
+        },
+        hardhatContracts.LensHub__factory.abi,
+        hardhatContracts.LensHub__factory.connect
+      ),
     } as const;
 
     return result;
@@ -65,6 +71,6 @@ export const contractConnectorConfig = () => {
 
 /**
  * ### Summary
- * This type describes all your contracts, it is the return of {@link contractConnectorConfig}
+ * This type describes all your contracts, it is the return of {@link appContractsConfig}
  */
-export type TAppConnectorList = NonNullable<ReturnType<typeof contractConnectorConfig>>;
+export type TAppConnectorList = NonNullable<ReturnType<typeof appContractsConfig>>;

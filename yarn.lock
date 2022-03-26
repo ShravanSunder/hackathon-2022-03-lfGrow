@@ -1922,7 +1922,7 @@ __metadata:
     eslint-plugin-testing-library: ^5.0.5
     eslint-plugin-unused-imports: ^2.0.0
     eth-components: 3.0.41
-    eth-hooks: 4.0.45
+    eth-hooks: 4.0.48
     ethereum-cryptography: ^0.1.3
     ethers: ^5.5.4
     fortmatic: ^2.2.1
@@ -8803,7 +8803,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eth-hooks@npm:4.0.45, eth-hooks@npm:^4.0.45":
+"eth-hooks@npm:4.0.48":
+  version: 4.0.48
+  resolution: "eth-hooks@npm:4.0.48"
+  dependencies:
+    "@ethersproject/abi": ^5.5.0
+    "@ethersproject/abstract-provider": ^5.5.1
+    "@ethersproject/address": ^5.5.0
+    "@ethersproject/bignumber": ^5.5.0
+    "@ethersproject/bytes": ^5.5.0
+    "@ethersproject/contracts": ^5.5.0
+    "@ethersproject/networks": ^5.5.2
+    "@ethersproject/providers": ^5.5.3
+    "@ethersproject/signing-key": ^5.5.0
+    "@ethersproject/solidity": ^5.5.0
+    "@ethersproject/units": ^5.5.0
+    "@uniswap/token-lists": ^1.0.0-beta.27
+    "@web3-react/abstract-connector": ^6.0.7
+    "@web3-react/core": ^6.1.9
+    "@web3-react/types": ^6.0.7
+    axios: ^0.25.0
+    ethers: ^5.5.4
+    lodash.isequal: ^4.5.0
+    merge-anything: ^5.0.2
+    react-query: ^3.34.16
+    ts-invariant: ^0.9.4
+    use-debounce: ^7.0.1
+    usehooks-ts: ^2.2.2
+    web3modal: ^1.9.5
+  peerDependencies:
+    "@uniswap/sdk": ^3.0.3
+    react: ">=17.0.2"
+    react-dom: ">=17.0.2"
+  checksum: 01e45bcf2e194c59441323df233a4afd46a6873cabb956d8d6769f73e6aa1c5e8f399c827c6ecca2cac4a7c5b2001925a4fedf2518729700eaaf418653dce9f4
+  languageName: node
+  linkType: hard
+
+"eth-hooks@npm:^4.0.45":
   version: 4.0.45
   resolution: "eth-hooks@npm:4.0.45"
   dependencies:
