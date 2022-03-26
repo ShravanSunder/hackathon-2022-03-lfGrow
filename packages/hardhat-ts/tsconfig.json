@@ -21,7 +21,6 @@
     "outDir": "dist",
     "paths": {
       "~~/*": ["./src/*"],
-      "scripts/*": ["./scripts/*"],
       "helpers/*": ["./helpers/*"],
       "contracts/*": ["./contracts/*"],
       "tests/*": ["./tests/*"],
