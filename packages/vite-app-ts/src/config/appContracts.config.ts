@@ -45,11 +45,11 @@ export const appContractsConfig = () => {
       // ),
 
       // 🙋🏽‍♂️ Add your external abi here (unverified contracts)`
-      LENS_HUB: createConnectorForExternalAbi(
-        'LENS_HUB',
+      LensHub: createConnectorForExternalAbi(
+        'LensHub',
         {
           [TARGET_NETWORK_INFO.chainId]: {
-            address: '0xD036a8F254ef782cb93af4F829A1568E992c3864',
+            address: '0xfec95864b4f5d68158C1c67981Bd5Ca0bC651571',
             chainId: TARGET_NETWORK_INFO.chainId,
           },
         },

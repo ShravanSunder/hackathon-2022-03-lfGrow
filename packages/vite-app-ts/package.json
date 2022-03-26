@@ -139,6 +139,7 @@
     "typescript": "^4.5.5",
     "vite": "^2.8.4",
     "vite-plugin-babel-macros": "^1.0.5",
+    "vite-plugin-checker": "^0.4.4",
     "vite-plugin-externals": "^0.3.4",
     "vite-plugin-imp": "^2.1.3",
     "vite-tsconfig-paths": "^3.4.0"

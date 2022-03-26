@@ -132,7 +132,7 @@ export const Main: FC = () => {
 
   // init contracts
   const patronFollowModule = useAppContracts('PatronFollowModule', ethersContext.chainId);
-  const lensHub = useAppContracts('LENS_HUB', ethersContext.chainId);
+  const lensHub = useAppContracts('LensHub', ethersContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 
   // keep track of a variable from the contract in the local React state:
