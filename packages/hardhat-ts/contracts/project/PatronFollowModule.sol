@@ -168,6 +168,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     address followerAddress,
     uint256 amount
   ) public {
+    console.log('start processPayment %d', profileId, amount);
     FollowerData memory follow = _profiles[profileId].followers[followerAddress];
     if (follow.followerAddress == address(0)) {
       revert PatronFollowErrors.InvalidFollowerForProfile();
@@ -175,16 +176,25 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
       revert PatronFollowErrors.SubscriptionPaymentAmountNotValid();
     }
 
-    address recipient = _profiles[profileId].profileAddress;
-    IERC20(POLYGON_DAI).safeTransferFrom(followerAddress, recipient, amount);
-    (followerAddress, recipient, amount);
+    console.log('processPayment: verfication passed');
+
+    if (amount > 0)
+    {
+        address recipient = _profiles[profileId].profileAddress;
+        IERC20(POLYGON_DAI).safeTransferFrom(followerAddress, recipient, amount);
+        (followerAddress, recipient, amount);
+
+        console.log('processPayment: paid');
+    }
 
     follow.lastPaymentAmount = amount;
     follow.lastPaymentTimestamp = block.timestamp;
 
     _profilesExtra[profileId].paymentHistory.push(PaymentHistory({ timestamp: follow.lastPaymentTimestamp, amount: follow.lastPaymentAmount, followerAddress: followerAddress }));
 
+    console.log('processPayment: set follower data');
     _profiles[profileId].followers[followerAddress] = follow;
+    console.log('processPayment: done!');
   }
 
   /********** Lens Protocol Primitives ***********/
@@ -204,12 +214,22 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     uint256 profileId,
     bytes calldata data
   ) external override {
-    (address currencyAddress, uint256 amount) = abi.decode(data, (address, uint256));
+      console.log('processFollow: %s', followerAddress);
+      console.logBytes(data);
+    
+    uint256 amount = 0;
+    if (data.length != 0) {
+        amount = abi.decode(data, (uint256));
+    }
+    
+    console.log('amount: %d', amount);
     //if (currencyAddress != POLYGON_DAI) revert PatronFollowErrors.InvalidCurrency();
 
     if (_profiles[profileId].followers[followerAddress].followerAddress == address(0)) {
-      _profiles[profileId].followers[followerAddress];
+      _profiles[profileId].followers[followerAddress].followerAddress = followerAddress;
     }
+
+    console.log('profileId: %d', profileId);
     processPayment(profileId, followerAddress, amount);
   }
 
@@ -241,7 +261,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     address to,
     uint256 followNFTTokenId
   ) external override {
-    revert PatronFollowErrors.TransferNotAllowed();
+    console.log('[followModuleTransferHook] profileId:%d', profileId);
   }
 
   //   /**

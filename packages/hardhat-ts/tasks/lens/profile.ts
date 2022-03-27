@@ -80,3 +80,18 @@ task('set-memberships-example', 'creates memberships data for a profile')
 
     console.log('done setting memberships');
   });
+
+task('set-followers-example', 'creates memberships data for a profile')
+  .addPositionalParam('profileId')
+  .setAction(async ({ profileId }: { profileId: number }, hre) => {
+    const [governance, , user, user2] = await initEnv(hre);
+    const account = await getAccountData(getMnemonic());
+    const addrs = getAddrs();
+    const lensHub = LensHub__factory.connect(addrs['lensHub proxy'], user2);
+
+    console.log('start setting followers...');
+
+    await lensHub.follow([profileId], [[]]);
+
+    console.log('done setting followers');
+  });
