@@ -1,6 +1,11 @@
+import { Wallet } from 'ethers';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+
 const DEBUG = false;
 
-export const getAccountData = async (mnemonic: string): Promise<{ address: string }> => {
+export const getAccountData = async (mnemonic: string, hre: HardhatRuntimeEnvironment): Promise<{ address: string; signer: Wallet }> => {
+  const ethers = hre.ethers;
+
   const hdkey = require('ethereumjs-wallet/hdkey');
   const bip39 = require('bip39');
   if (DEBUG) console.log('mnemonic', mnemonic);
@@ -16,6 +21,7 @@ export const getAccountData = async (mnemonic: string): Promise<{ address: strin
   if (DEBUG) console.log('privateKey', privateKey);
   const EthUtil = require('ethereumjs-util');
   const address = `0x${EthUtil.privateToAddress(wallet._privKey).toString('hex')}`;
-  // const signer = await ethers.getSigner(address);
-  return { address };
+
+  const signer = new Wallet(privateKey, hre.ethers.provider);
+  return { address, signer };
 };

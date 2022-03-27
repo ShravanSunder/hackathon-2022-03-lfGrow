@@ -28,6 +28,6 @@
       "tasks/*": ["./tasks/*"]
     }
   },
-  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks"],
+  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts"],
   "exclude": ["**/node_modules", ".husky", "./src/styles/css", "./tailwind.config.js"]
 }

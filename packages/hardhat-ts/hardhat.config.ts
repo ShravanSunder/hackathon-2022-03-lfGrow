@@ -34,7 +34,7 @@ import { getMnemonic, mnemonicPath } from './tasks/functions/mnemonic';
 envConfig({ path: '../vite-app-ts/.env' });
 
 // load all tasks
-glob.sync('./tasks/*.ts').forEach((file: string) => {
+glob.sync('./tasks/**/*.ts').forEach((file: string) => {
   require(path.resolve(file));
 });
 

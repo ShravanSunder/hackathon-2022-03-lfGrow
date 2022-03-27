@@ -1815,6 +1815,7 @@ __metadata:
     prettier-plugin-solidity: ^1.0.0-beta.19
     qrcode-terminal: ^0.12.0
     rlp: ^2.2.7
+    shx: ^0.3.4
     solhint: ^3.3.7
     solhint-plugin-prettier: ^0.0.5
     solidity-coverage: ^0.7.20

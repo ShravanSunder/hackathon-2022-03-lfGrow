@@ -1,5 +1,9 @@
+import fs from 'fs';
+
 import { DeployFunction } from 'hardhat-deploy/types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
+
+import lensAddresses from '../addresses.json';
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { getNamedAccounts, deployments } = hre;
@@ -9,7 +13,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     // see https://docs.lens.dev/docs/testnet-addresses#mumbai-testnet-addresses
-    args: ['0x7c86e2a63941442462cce73EcA9F07F4Ad023261'],
+    args: [lensAddresses['lensHub proxy']],
     log: true,
   });
 

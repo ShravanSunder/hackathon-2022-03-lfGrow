@@ -12,6 +12,7 @@ import { externalContractsAddressMap } from './externalContracts.config';
 import { TARGET_NETWORK_INFO } from '~~/config/app.config';
 import * as hardhatContracts from '~~/generated/contract-types';
 import * as externalContracts from '~~/generated/external-contracts/esm/types';
+import lensAddresses from '~~/generated/lens-addresses.json';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -49,7 +50,7 @@ export const appContractsConfig = () => {
         'LensHub',
         {
           [TARGET_NETWORK_INFO.chainId]: {
-            address: '0xfec95864b4f5d68158C1c67981Bd5Ca0bC651571',
+            address: lensAddresses['lensHub proxy'],
             chainId: TARGET_NETWORK_INFO.chainId,
           },
         },

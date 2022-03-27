@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { task } from 'hardhat/config';
 import { HttpNetworkUserConfig } from 'hardhat/types';
 import { getAccountData } from 'tasks/functions/getAccountData';
@@ -8,8 +6,8 @@ import { DEBUG, config } from '../hardhat.config';
 
 import { getMnemonic, mnemonicPath } from './functions/mnemonic';
 
-task('account', 'Get balance informations for the deployment account.', async (_, { ethers }) => {
-  const { address } = await getAccountData(getMnemonic());
+task('account', 'Get balance informations for the deployment account.', async (_, hre) => {
+  const { address } = await getAccountData(getMnemonic(), hre);
 
   const qrcode = require('qrcode-terminal');
   qrcode.generate(address);
@@ -18,10 +16,10 @@ task('account', 'Get balance informations for the deployment account.', async (_
     // console.log(config.networks[n],n)
     try {
       const { url } = config.networks[n] as HttpNetworkUserConfig;
-      const provider = new ethers.providers.JsonRpcProvider(url);
+      const provider = new hre.ethers.providers.JsonRpcProvider(url);
       const balance = await provider.getBalance(address);
       console.log(` -- ${n} --  -- -- 📡 `);
-      console.log(`   balance: ${ethers.utils.formatEther(balance)}`);
+      console.log(`   balance: ${hre.ethers.utils.formatEther(balance)}`);
       console.log(`   nonce: ${await provider.getTransactionCount(address)}`);
     } catch (e) {
       if (DEBUG) console.log(e);
