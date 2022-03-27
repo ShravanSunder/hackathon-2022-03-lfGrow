@@ -8,7 +8,7 @@ import { DEBUG } from '../hardhat.config';
 
 import { mnemonicPath } from './functions/mnemonic';
 
-task('generate', 'Create a mnemonic for builder deploys', async (_, { ethers }) => {
+task('generate', 'Create a mnemonic for builder deploys', async (_, _hre) => {
   const bip39 = require('bip39');
   const hdkey = require('ethereumjs-wallet/hdkey');
   const mnemonic = bip39.generateMnemonic();

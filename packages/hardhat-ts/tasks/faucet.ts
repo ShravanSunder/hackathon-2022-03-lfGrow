@@ -1,5 +1,5 @@
 import { task } from 'hardhat/config';
-import { getAccountData } from 'tasks/account';
+import { getAccountData } from 'tasks/functions/getAccountData';
 import { getMnemonic } from 'tasks/functions/mnemonic';
 
 task('faucet', 'Sends ETH and tokens to an address')
