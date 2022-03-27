@@ -99,6 +99,10 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     return result;
   }
 
+  function checkFollowerActive(uint256 profileId, address followerAddress) public returns (bool) {
+    _profiles[profileId].followers[followerAddress].isActive = isFollowerActive(profileId, _profiles[profileId].followers[followerAddress].followerAddress);
+  }
+
   /********** Patron Functions *****/
 
   /**
@@ -155,12 +159,13 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
       return array;
   }
 
-  function getFollowers(uint256 profileId) public returns (FollowerData[] memory){
+  function getFollowers(uint256 profileId) view public returns (FollowerData[] memory){
       FollowerData[] memory array = new FollowerData[](_profiles[profileId].followerIndex.length);
       for (uint32 i = 0; i < _profiles[profileId].followerIndex.length; i++) {
           address index = _profiles[profileId].followerIndex[i];
-          _profiles[profileId].followers[index].isActive = isFollowerActive(profileId, _profiles[profileId].followers[index].followerAddress);
+          
           array[i] = _profiles[profileId].followers[index];
+          array[i].isActive = isFollowerActive(profileId, index);
       }
       return array;
   }
