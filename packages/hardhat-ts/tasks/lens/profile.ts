@@ -5,7 +5,7 @@ import { task } from 'hardhat/config';
 import { getAccountData } from 'tasks/functions/getAccountData';
 import { getMnemonic } from 'tasks/functions/mnemonic';
 
-import { LensHub__factory } from '../../generated/contract-types';
+import { LensHub__factory, PatronFollowModule__factory } from '../../generated/contract-types';
 import { DataTypes } from '../../generated/contract-types/LensHub';
 import followModule from '../../generated/deployments/localhost/PatronFollowModule.json';
 import { waitForTx, initEnv, getAddrs, ZERO_ADDRESS } from '../helpers/utils';
@@ -46,7 +46,7 @@ task('create-profile', 'creates a profile')
     console.log(`Profile ID by handle: ${await lensHub.getProfileIdByHandle('zer0dot')}`);
   });
 
-task('set-follow-module', 'creates a profile')
+task('set-follow-module', 'sets the patron follow module')
   .addPositionalParam('profileId')
   .setAction(async ({ profileId }: { profileId: number }, hre) => {
     const [governance, , user] = await initEnv(hre);
@@ -58,5 +58,25 @@ task('set-follow-module', 'creates a profile')
     await waitForTx(lensHub.whitelistFollowModule(followModule.address, true));
 
     console.log('set follow module...');
-    await waitForTx(lensHub.connect(user).setFollowModule(1, followModule.address, []));
+    await waitForTx(lensHub.connect(user).setFollowModule(profileId, ZERO_ADDRESS, []));
+    await waitForTx(lensHub.connect(user).setFollowModule(profileId, followModule.address, []));
+  });
+
+task('set-memberships-example', 'creates memberships data for a profile')
+  .addPositionalParam('profileId')
+  .setAction(async ({ profileId }: { profileId: number }, hre) => {
+    const [governance, , user] = await initEnv(hre);
+    const account = await getAccountData(getMnemonic());
+    const addrs = getAddrs();
+    const lensHub = LensHub__factory.connect(addrs['lensHub proxy'], governance);
+    const profile = PatronFollowModule__factory.connect(followModule.address, user);
+
+    console.log('start setting memberships...');
+
+    await profile.setMembership(profileId, 1, 'Supporter', 'https://s3/secretstuff/', 1);
+    await profile.setMembership(profileId, 2, 'Believer', 'https://s3/secretstuff/', 5);
+    await profile.setMembership(profileId, 3, 'Fundie', 'https://s3/secretstuff/', 10);
+    await profile.setMembership(profileId, 4, 'Paragon', 'https://s3/secretstuff/', 50);
+
+    console.log('done setting memberships');
   });

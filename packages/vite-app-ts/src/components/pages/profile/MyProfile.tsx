@@ -1,6 +1,5 @@
 import { useContractReader } from 'eth-hooks';
 import { useEthersContext } from 'eth-hooks/context';
-import { ethers } from 'ethers';
 import { FC, ReactElement } from 'react';
 
 import { useAppContracts } from '~~/components/contractContext';
@@ -22,11 +21,11 @@ export const MyProfile: FC = () => {
   if (myProfile) {
     profileDetails = (
       <>
-        <div className="p-2 text-lg capitalize">Profile Details</div>
+        <div className="p-2 text-lg font-bold capitalize">Profile Details</div>
         <div className="justify-between grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
-          <div className="text-m columns-1">Profile Id</div>
+          <div className="text-m columns-1 border-slate-500  ">Profile Id</div>
           <div className="text-m columns-2 col-span-2">{myProfile.profileId?.toString() ?? ''}</div>
-          <div className="text-m columns-1">Address</div>
+          <div className="text-m columns-1  border-slate-500">Address</div>
           <div className="text-m columns-2 col-span-2">{myProfile.profileAddress?.toString() ?? ''}</div>
         </div>
       </>
@@ -37,17 +36,20 @@ export const MyProfile: FC = () => {
   if (myMemberships) {
     membershipDetails = (
       <>
-        <div className="p-2 text-lg capitalize ">Membership Level Details</div>
+        <div className="p-2 text-lg font-bold capitalize">Membership Level Details</div>
         <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
           {myMemberships.map((membership) => {
             return (
               <>
-                <div className="text-m columns-1">Membership Id</div>
-                <div className="text-m columns-2 col-span-2">{membership.id}</div>
-                <div className="text-m columns-1">Minimum Amount</div>
-                <div className="text-m columns-2 col-span-2">{ethers.utils.formatEther(membership.minAmount)}</div>
-                <div className="text-m columns-1">More Data (can be json to load)</div>
-                <div className="text-m columns-2 col-span-2">{membership.dataUrl}</div>
+                <div className="p-4 col-span-3"></div>
+                <div className="text-m columns-1 border-slate-500">Membership Id</div>
+                <div className="font-light text-m columns-2 col-span-2">{membership.id}</div>
+                <div className="text-m columns-1  border-slate-500">Minimum Amount</div>
+                <div className="font-light text-m columns-2 col-span-2">
+                  {'$' + `${membership.minAmount?.toString()}`}
+                </div>
+                <div className="text-m columns-1 border-slate-500">Data url</div>
+                <div className="font-light text-m columns-2 col-span-2">{membership.dataUrl}</div>
               </>
             );
           })}
@@ -60,17 +62,18 @@ export const MyProfile: FC = () => {
   if (myFollowers) {
     followersDetails = (
       <>
-        <div className="p-2 text-lg capitalize">Follower Details</div>
+        <div className="p-2 text-lg font-bold capitalize">Follower Details</div>
         <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
           {myFollowers.map((follower) => {
             return (
               <>
+                <div className="p-4 col-span-3"></div>
                 <div className="text-m columns-1"> Follower Address</div>
-                <div className="text-m columns-2 col-span-2">{follower.followerAddress}</div>
+                <div className="font-light text-m columns-2 col-span-2">{follower.followerAddress}</div>
                 <div className="text-m columns-1"> Last Payment</div>
-                <div className="text-m columns-2 col-span-2">{follower.lastPaymentAmount}</div>
+                <div className="font-light text-m columns-2 col-span-2">{follower.lastPaymentAmount}</div>
                 <div className="text-m columns-1"> Last Payed date</div>
-                <div className="text-m columns-2 col-span-2">{follower.lastPaymentTimestamp}</div>
+                <div className="font-light text-m columns-2 col-span-2">{follower.lastPaymentTimestamp}</div>
               </>
             );
           })}

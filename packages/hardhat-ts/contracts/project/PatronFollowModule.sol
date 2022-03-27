@@ -43,6 +43,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     uint256 lastPaymentAmount;
     uint256 lastPaymentTimestamp;
     string dataUrl;
+    string name;
   }
 
   struct ProfileData {
@@ -101,21 +102,47 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   /**
    * @notice Set or update a membership level for a profile
    */
-  function setMemberships(
+  function setMembership(
     uint256 profileId,
     uint32 id,
     string calldata name,
     string calldata dataUrl,
     uint256 amount
   ) external {
+    console.log('setMembership: %d', id);
     assertProfileOwner(profileId);
     _profiles[profileId].membershipLevels[id] = MembershipLevel({ id: id, name: name, dataUrl: dataUrl, minAmount: amount });
-    _profiles[profileId].membershipIndex[id] = id;
+
+
+    // update membership index
+    bool found = false;
+    for (uint i = 0; i < _profiles[profileId].membershipIndex.length; i++) {
+        if (_profiles[profileId].membershipIndex[i] == id) {
+            found = true;
+        }
+    }
+    if (!found) {
+        _profiles[profileId].membershipIndex.push(id);
+    }
   }
 
-//   function getMemberships(uint256 profileId) public returns (mapping(uint32 => MembershipLevel) calldata){
-//       return _profiles[profileId].membershipLevels;
-//   }
+  function deleteMembership(
+    uint256 profileId,
+    uint32 id
+  ) external {
+    console.log('deleteMembership %d', id);
+    assertProfileOwner(profileId);
+    delete _profiles[profileId].membershipLevels[id];
+
+
+    // update membership index
+    for (uint i = 0; i < _profiles[profileId].membershipIndex.length; i++) {
+        if (_profiles[profileId].membershipIndex[i] == id) {
+            _profiles[profileId].membershipIndex[i] = _profiles[profileId].membershipIndex[_profiles[profileId].membershipIndex.length];
+            delete _profiles[profileId].membershipIndex[_profiles[profileId].membershipIndex.length];
+        }
+    }
+  }
 
   function getMemberships(uint256 profileId) view public returns (MembershipLevel[] memory){
       MembershipLevel[] memory array = new MembershipLevel[](_profiles[profileId].membershipIndex.length);
@@ -169,6 +196,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     _profiles[profileId].profileAddress = owner;
     console.log('[initializeFollowModule] profileId:%d', profileId);
     console.log('_profile: %d', _profiles[profileId].profileId);
+    console.log('_profile: %s', _profiles[profileId].profileAddress);
   }
 
   function processFollow(
@@ -177,7 +205,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     bytes calldata data
   ) external override {
     (address currencyAddress, uint256 amount) = abi.decode(data, (address, uint256));
-    if (currencyAddress != POLYGON_DAI) revert PatronFollowErrors.InvalidCurrency();
+    //if (currencyAddress != POLYGON_DAI) revert PatronFollowErrors.InvalidCurrency();
 
     if (_profiles[profileId].followers[followerAddress].followerAddress == address(0)) {
       _profiles[profileId].followers[followerAddress];
