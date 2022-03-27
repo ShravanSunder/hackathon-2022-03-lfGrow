@@ -1,7 +1,7 @@
 pragma solidity 0.8.10;
 //SPDX-License-Identifier: MIT
 
-import "hardhat/console.sol";
+import { console } from "hardhat/console.sol";
 import { IFollowModule } from "../interfaces/IFollowModule.sol";
 import { ModuleBase } from "../core/modules/ModuleBase.sol";
 import { Errors } from "../libraries/Errors.sol";
@@ -138,9 +138,12 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   /********** Lens Protocol Primitives ***********/
 
   function initializeFollowModule(uint256 profileId, bytes calldata data) external override onlyHub returns (bytes memory) {
+    console.log('hi!');
     address owner = IERC721(HUB).ownerOf(profileId);
     _profiles[profileId].profileId = profileId;
     _profiles[profileId].profileAddress = owner;
+    console.log('[initializeFollowModule] profileId:%d', profileId);
+    console.log('_profile: %d', _profiles[profileId].profileId);
   }
 
   function processFollow(

@@ -1,6 +1,16 @@
+import { useEthersContext } from 'eth-hooks/context';
 import { FC } from 'react';
 
+import { useAppContracts } from '~~/components/contractContext';
+
 export const Profile: FC = () => {
+  const ethersContext = useEthersContext();
+  const lensHub = useAppContracts('LensHub', ethersContext.chainId);
+
+  const handleFollow = (): void => {
+    void lensHub?.follow([1], []);
+  };
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -12,7 +22,9 @@ export const Profile: FC = () => {
         </div>
         <div className="mt-4 text-lg font-semibold">Otis P. Smith</div>
         <div className="font-light">is creating the best web3 content</div>
-        <button className="my-4 btn btn-wide btn-success">Become a patron</button>
+        <button className="my-4 btn btn-wide btn-success" onClick={handleFollow}>
+          Become a patron
+        </button>
         <div className="shadow-md rounded-md">
           <div className="flex flex-col">
             <p className="m-4 font-light">

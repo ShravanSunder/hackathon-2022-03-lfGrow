@@ -11,7 +11,7 @@ import '~~/styles/main-page.css';
 
 import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
-import { Profile } from './components/pages';
+import { MyProfile, Profile } from './components/pages';
 
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/components/contractContext';
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
@@ -50,13 +50,22 @@ export const MainPageMenu: FC<IMainPageMenuProps> = (props) => (
         Profile
       </Link>
     </Menu.Item>
+    <Menu.Item key="/my-profile">
+      <Link
+        onClick={(): void => {
+          props.setRoute('/my-profile');
+        }}
+        to="/my-profile">
+        My Profile Details
+      </Link>
+    </Menu.Item>
     <Menu.Item key="/follow-module">
       <Link
         onClick={(): void => {
           props.setRoute('/follow-module');
         }}
         to="/follow-module">
-        PatronFollowModule
+        ⚙️ PatronFollowModule
       </Link>
     </Menu.Item>
     <Menu.Item key="/lens-hub">
@@ -65,7 +74,7 @@ export const MainPageMenu: FC<IMainPageMenuProps> = (props) => (
           props.setRoute('/lens-hub');
         }}
         to="/lens-hub">
-        TestProfileModule
+        ⚙️ TestProfileModule
       </Link>
     </Menu.Item>
     <Menu.Item key="/mainnetdai">
@@ -74,7 +83,7 @@ export const MainPageMenu: FC<IMainPageMenuProps> = (props) => (
           props.setRoute('/mainnetdai');
         }}
         to="/mainnetdai">
-        Mainnet DAI
+        ⚙️ Mainnet DAI
       </Link>
     </Menu.Item>
     {/* <Menu.Item key="/subgraph">
@@ -162,6 +171,9 @@ export const Main: FC = () => {
         <Switch>
           <Route exact path="/">
             <Profile></Profile>
+          </Route>
+          <Route exact path="/my-profile">
+            <MyProfile></MyProfile>
           </Route>
           <Route exact path="/follow-module">
             <MainPageContracts scaffoldAppProviders={scaffoldAppProviders} />

@@ -57,9 +57,6 @@ task('set-follow-module', 'creates a profile')
     console.log('whitelist follow module...');
     await waitForTx(lensHub.whitelistFollowModule(followModule.address, true));
 
+    console.log('set follow module...');
     await waitForTx(lensHub.connect(user).setFollowModule(1, followModule.address, []));
-
-    console.log(`Total supply (should be 1): ${await lensHub.totalSupply()}`);
-    console.log(`Profile owner: ${await lensHub.ownerOf(1)}, user address (should be the same): ${user.address}`);
-    console.log(`Profile ID by handle: ${await lensHub.getProfileIdByHandle('zer0dot')}`);
   });
