@@ -11,5 +11,5 @@ task('whitelist-follow-module', 'unpauses the protocol').setAction(async ({ addr
   const addrs = getAddrs();
   const lensHub: LensHub = LensHub__factory.connect(addrs['lensHub proxy'], governance);
   await waitForTx(lensHub.whitelistFollowModule(followModule.address, true));
-  // await waitForTx(lensHub.whitelist(followModule.address, true));
+  console.log('whitelisted follow module...', address);
 });

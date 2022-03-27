@@ -1,5 +1,6 @@
 import { useEthersContext } from 'eth-hooks/context';
-import { FC } from 'react';
+import { ethers } from 'ethers';
+import { FC, useState } from 'react';
 
 import { useAppContracts } from '~~/components/contractContext';
 
@@ -7,8 +8,19 @@ export const Profile: FC = () => {
   const ethersContext = useEthersContext();
   const lensHub = useAppContracts('LensHub', ethersContext.chainId);
 
+  const [followed, setFollowed] = useState(false);
+
+  const makeRandomName = (): string => {
+    return `Otils P. Smith Random #${Math.floor(Math.random() * 10000)}`;
+  };
+
+  const [randomName, setRandomName] = useState(makeRandomName);
+
   const handleFollow = (): void => {
-    void lensHub?.follow([1], []);
+    const data = ethers.utils.defaultAbiCoder.encode(['uint', 'string'], [100, randomName]);
+    void lensHub?.follow([1], [data]);
+    setRandomName(makeRandomName());
+    setFollowed(true);
   };
 
   return (
@@ -20,9 +32,9 @@ export const Profile: FC = () => {
             <img src="https://api.lorem.space/image/face?hash=3174" />
           </div>
         </div>
-        <div className="mt-4 text-lg font-semibold">Otis P. Smith</div>
+        <div className="mt-4 text-lg font-semibold">{randomName}</div>
         <div className="font-light">is creating the best web3 content</div>
-        <button className="my-4 btn btn-wide btn-success" onClick={handleFollow}>
+        <button className="my-4 btn btn-wide btn-success" onClick={handleFollow} disabled={followed}>
           Become a patron
         </button>
         <div className="shadow-md rounded-md">

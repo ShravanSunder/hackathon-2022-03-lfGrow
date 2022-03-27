@@ -7,7 +7,7 @@ task('unpause', 'unpauses the protocol').setAction(async ({}, hre) => {
   const [governance] = await initEnv(hre);
   const addrs = getAddrs();
   const lensHub = LensHub__factory.connect(addrs['lensHub proxy'], governance);
-  console.log(await lensHub.getState());
+  console.log(await lensHub.getState(), 'before unpause');
   await waitForTx(lensHub.setState(ProtocolState.Unpaused));
   console.log(await lensHub.getState());
 });

@@ -15,13 +15,14 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 library PatronFollowErrors {
-  error TransferNotAllowed();
+  error ProfileTransferNotAllowed();
   error NotImplemented();
   error InvalidCurrency();
   error InvalidFollowerForProfile();
   error SubscriptionPaymentAmountNotValid();
   error SubscriptionExpired();
   error SubscriptionInvalid();
+  error SubscriptonCouldNotTransferPayment();
 }
 
 // test profile address: 0xb212a727DD414c9cc309F7C663c5753D170AFF28
@@ -44,6 +45,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     uint256 lastPaymentTimestamp;
     string dataUrl;
     string name;
+    bool isActive;
   }
 
   struct ProfileData {
@@ -147,18 +149,43 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   function getMemberships(uint256 profileId) view public returns (MembershipLevel[] memory){
       MembershipLevel[] memory array = new MembershipLevel[](_profiles[profileId].membershipIndex.length);
       for (uint32 i = 0; i < _profiles[profileId].membershipIndex.length; i++) {
-          array[i] = _profiles[profileId].membershipLevels[_profiles[profileId].membershipIndex[i]];
+          uint32 index = _profiles[profileId].membershipIndex[i];
+          array[i] = _profiles[profileId].membershipLevels[index];
       }
       return array;
   }
 
-  function getFollowers(uint256 profileId) view public returns (FollowerData[] memory){
+  function getFollowers(uint256 profileId) public returns (FollowerData[] memory){
       FollowerData[] memory array = new FollowerData[](_profiles[profileId].followerIndex.length);
       for (uint32 i = 0; i < _profiles[profileId].followerIndex.length; i++) {
-          array[i] = _profiles[profileId].followers[_profiles[profileId].followerIndex[i]];
+          address index = _profiles[profileId].followerIndex[i];
+          _profiles[profileId].followers[index].isActive = isFollowerActive(profileId, _profiles[profileId].followers[index].followerAddress);
+          array[i] = _profiles[profileId].followers[index];
       }
       return array;
   }
+
+    /**
+    * @notice how to pay for subscriptions, disabled for demo
+    */
+  function paySubscription (address followerAddress, address recipient, uint256 amount) public returns(bool) {
+      //disabled for now
+     //IERC20(POLYGON_DAI).safeTransferFrom(followerAddress, recipient, amount)
+    //address(followerAddress).send()
+
+    // try 
+    //     {
+    //         paymentSuccessful = true;
+    //         console.log('processPayment: paid');
+    //     }
+    //     catch (bytes memory reason) {
+    //         console.log("processPayment failed: %s");
+    //         console.logBytes(reason);
+    //         paymentSuccessful = false;
+    //     }
+    return true;
+  }
+
 
   /**
    * @notice Process payment for a profile from a follower
@@ -177,23 +204,28 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     }
 
     console.log('processPayment: verfication passed');
-
-    if (amount > 0)
+    bool paymentSuccessful = false;
+    if (false && amount > 0)
     {
         address recipient = _profiles[profileId].profileAddress;
-        IERC20(POLYGON_DAI).safeTransferFrom(followerAddress, recipient, amount);
-        (followerAddress, recipient, amount);
-
-        console.log('processPayment: paid');
+        paymentSuccessful = paySubscription(followerAddress, recipient, amount);
     }
 
+    if (!paymentSuccessful) {
+        // TODO: disabled for now
+        // revert Errors.SubscriptonCouldNotTransferPayment();
+    }
+
+    console.log("processPayment: done payment");
     follow.lastPaymentAmount = amount;
     follow.lastPaymentTimestamp = block.timestamp;
 
     _profilesExtra[profileId].paymentHistory.push(PaymentHistory({ timestamp: follow.lastPaymentTimestamp, amount: follow.lastPaymentAmount, followerAddress: followerAddress }));
 
-    console.log('processPayment: set follower data');
+    console.log("processPayment: set follower data");
+    
     _profiles[profileId].followers[followerAddress] = follow;
+    console.log(follow.followerAddress, _profiles[profileId].followers[followerAddress].followerAddress);
     console.log('processPayment: done!');
   }
 
@@ -218,18 +250,25 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
       console.logBytes(data);
     
     uint256 amount = 0;
+    string memory name = '';
     if (data.length != 0) {
-        amount = abi.decode(data, (uint256));
-    }
-    
-    console.log('amount: %d', amount);
-    //if (currencyAddress != POLYGON_DAI) revert PatronFollowErrors.InvalidCurrency();
-
-    if (_profiles[profileId].followers[followerAddress].followerAddress == address(0)) {
-      _profiles[profileId].followers[followerAddress].followerAddress = followerAddress;
+        (amount, name) = abi.decode(data, (uint256, string));
     }
 
     console.log('profileId: %d', profileId);
+    _profiles[profileId].followers[followerAddress].followerAddress = followerAddress;
+    _profiles[profileId].followers[followerAddress].name = name;
+    
+    bool found = false;
+    for (uint i = 0; i < _profiles[profileId].followerIndex.length; i++) {
+        if (_profiles[profileId].followerIndex[i] == followerAddress) {
+            found = true;
+        }
+    }
+    if (!found) {
+        _profiles[profileId].followerIndex.push(followerAddress);
+    }
+
     processPayment(profileId, followerAddress, amount);
   }
 

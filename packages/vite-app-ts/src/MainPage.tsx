@@ -11,7 +11,8 @@ import '~~/styles/main-page.css';
 
 import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
-import { MyProfile, Profile } from './components/pages';
+import { MyProfile } from './components/pages/profile/MyProfile';
+import { Profile } from './components/pages/profile/Profile';
 
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/components/contractContext';
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';

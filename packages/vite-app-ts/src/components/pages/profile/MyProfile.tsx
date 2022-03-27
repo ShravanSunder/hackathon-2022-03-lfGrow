@@ -21,7 +21,7 @@ export const MyProfile: FC = () => {
   if (myProfile) {
     profileDetails = (
       <>
-        <div className="p-2 text-lg font-bold capitalize">Profile Details</div>
+        <div className="p-2  pt-8  text-2xl font-bold capitalize">Profile Details</div>
         <div className="justify-between grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
           <div className="text-m columns-1 border-slate-500  ">Profile Id</div>
           <div className="text-m columns-2 col-span-2">{myProfile.profileId?.toString() ?? ''}</div>
@@ -36,24 +36,35 @@ export const MyProfile: FC = () => {
   if (myMemberships) {
     membershipDetails = (
       <>
-        <div className="p-2 text-lg font-bold capitalize">Membership Level Details</div>
-        <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
-          {myMemberships.map((membership) => {
-            return (
-              <>
-                <div className="p-4 col-span-3"></div>
-                <div className="text-m columns-1 border-slate-500">Membership Id</div>
-                <div className="font-light text-m columns-2 col-span-2">{membership.id}</div>
-                <div className="text-m columns-1  border-slate-500">Minimum Amount</div>
-                <div className="font-light text-m columns-2 col-span-2">
-                  {'$' + `${membership.minAmount?.toString()}`}
+        <div className="p-2 pt-8 text-2xl font-bold capitalize">Membership Level Details</div>
+
+        {myMemberships.map((membership, i) => {
+          return (
+            <div key={i} className="p-4">
+              <div className="bg-purple-900 shadow-xl card lg:card-side">
+                <figure className="p-0 m-0">
+                  <img src={`https://api.lorem.space/image/furniture?w=400&h=400&t=${i}`} alt="levels" />
+                </figure>
+                <div className="card-body">
+                  <h2 className="card-title">{membership.name}</h2>
+                  <>
+                    <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
+                      <div className="pt-2 col-span-3"></div>
+                      <div className="text-m columns-1 border-slate-500">Membership Id</div>
+                      <div className="font-light text-m columns-2 col-span-2">{membership.id}</div>
+                      <div className="text-m columns-1  border-slate-500">Minimum Amount</div>
+                      <div className="font-light text-m columns-2 col-span-2">
+                        {'$' + `${membership.minAmount?.toString()}`}
+                      </div>
+                      <div className="text-m columns-1 border-slate-500">Data url</div>
+                      <div className="font-light text-m columns-2 col-span-2">{membership.dataUrl}</div>
+                    </div>
+                  </>
                 </div>
-                <div className="text-m columns-1 border-slate-500">Data url</div>
-                <div className="font-light text-m columns-2 col-span-2">{membership.dataUrl}</div>
-              </>
-            );
-          })}
-        </div>
+              </div>
+            </div>
+          );
+        })}
       </>
     );
   }
@@ -62,22 +73,36 @@ export const MyProfile: FC = () => {
   if (myFollowers) {
     followersDetails = (
       <>
-        <div className="p-2 text-lg font-bold capitalize">Follower Details</div>
-        <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
-          {myFollowers.map((follower) => {
-            return (
-              <>
-                <div className="p-4 col-span-3"></div>
-                <div className="text-m columns-1"> Follower Address</div>
-                <div className="font-light text-m columns-2 col-span-2">{follower.followerAddress}</div>
-                <div className="text-m columns-1"> Last Payment</div>
-                <div className="font-light text-m columns-2 col-span-2">{follower.lastPaymentAmount}</div>
-                <div className="text-m columns-1"> Last Payed date</div>
-                <div className="font-light text-m columns-2 col-span-2">{follower.lastPaymentTimestamp}</div>
-              </>
-            );
-          })}
-        </div>
+        <div className="p-2  pt-8 text-2xl font-bold capitalize">Follower Details</div>
+        {myFollowers.map((follower, i) => {
+          return (
+            <div key={i} className="p-4">
+              <div className="bg-purple-900 shadow-xl card lg:card-side">
+                <figure className="p-0 m-0">
+                  <img src={`https://api.lorem.space/image/fashion?w=300&h=300&t=${i}`} alt="levels" />
+                </figure>
+                <div className="card-body">
+                  <h2 className="card-title">{follower.name}</h2>
+                  <>
+                    <div className="grid grid-cols-3 gap-x-20 gap-y-4 justify-items-start">
+                      <div className="p-4 col-span-3"></div>
+                      <div className="text-m columns-1"> Follower Address</div>
+                      <div className="font-light text-m columns-2 col-span-2">{follower.followerAddress}</div>
+                      <div className="text-m columns-1"> Last Payment</div>
+                      <div className="font-light text-m columns-2 col-span-2">
+                        {follower.lastPaymentAmount?.toString()}
+                      </div>
+                      <div className="text-m columns-1"> Last Payed date</div>
+                      <div className="font-light text-m columns-2 col-span-2">
+                        {follower.lastPaymentTimestamp?.toString()}
+                      </div>
+                    </div>
+                  </>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </>
     );
   }
@@ -91,7 +116,7 @@ export const MyProfile: FC = () => {
             <img src="https://api.lorem.space/image/face?hash=3174" />
           </div>
         </div>
-        <div className="mt-4 text-lg font-semibold">Otis P. Smith</div>
+        <div className="mt-4 text-lg font-semibold">Shravan's Patreon Details</div>
         <div className="p-12"></div>
         {loading}
         {profileDetails}
