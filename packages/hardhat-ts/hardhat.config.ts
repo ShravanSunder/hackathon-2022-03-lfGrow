@@ -34,9 +34,11 @@ import { getMnemonic, mnemonicPath } from './tasks/functions/mnemonic';
 envConfig({ path: '../vite-app-ts/.env' });
 
 // load all tasks
-glob.sync('./tasks/**/*.ts').forEach((file: string) => {
-  require(path.resolve(file));
-});
+if (process.env.COMPILING != null && process.env.COMPILING === 'true') {
+  glob.sync('./tasks/**/*.ts').forEach((file: string) => {
+    require(path.resolve(file));
+  });
+}
 
 /**
  * Set your target network!!!

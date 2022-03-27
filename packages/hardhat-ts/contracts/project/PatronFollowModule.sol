@@ -42,13 +42,16 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     address followerAddress;
     uint256 lastPaymentAmount;
     uint256 lastPaymentTimestamp;
+    string dataUrl;
   }
 
   struct ProfileData {
     uint256 profileId;
     address profileAddress;
     mapping(uint32 => MembershipLevel) membershipLevels;
+    uint32[] membershipIndex;
     mapping(address => FollowerData) followers;
+    address[] followerIndex;
     uint256 miniumSubscriptionAmount;
   }
 
@@ -57,10 +60,11 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   struct PaymentHistory {
     uint256 timestamp;
     uint256 amount;
+    address followerAddress;
   }
 
   struct ProfileDataExtra {
-    uint256 profileAddress;
+    uint256 profileId;
     PaymentHistory[] paymentHistory;
   }
   mapping(uint256 => ProfileDataExtra) public _profilesExtra;
@@ -106,6 +110,27 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
   ) external {
     assertProfileOwner(profileId);
     _profiles[profileId].membershipLevels[id] = MembershipLevel({ id: id, name: name, dataUrl: dataUrl, minAmount: amount });
+    _profiles[profileId].membershipIndex[id] = id;
+  }
+
+//   function getMemberships(uint256 profileId) public returns (mapping(uint32 => MembershipLevel) calldata){
+//       return _profiles[profileId].membershipLevels;
+//   }
+
+  function getMemberships(uint256 profileId) view public returns (MembershipLevel[] memory){
+      MembershipLevel[] memory array = new MembershipLevel[](_profiles[profileId].membershipIndex.length);
+      for (uint32 i = 0; i < _profiles[profileId].membershipIndex.length; i++) {
+          array[i] = _profiles[profileId].membershipLevels[_profiles[profileId].membershipIndex[i]];
+      }
+      return array;
+  }
+
+  function getFollowers(uint256 profileId) view public returns (FollowerData[] memory){
+      FollowerData[] memory array = new FollowerData[](_profiles[profileId].followerIndex.length);
+      for (uint32 i = 0; i < _profiles[profileId].followerIndex.length; i++) {
+          array[i] = _profiles[profileId].followers[_profiles[profileId].followerIndex[i]];
+      }
+      return array;
   }
 
   /**
@@ -130,7 +155,7 @@ contract PatronFollowModule is IFollowModule, ModuleBase {
     follow.lastPaymentAmount = amount;
     follow.lastPaymentTimestamp = block.timestamp;
 
-    _profilesExtra[profileId].paymentHistory.push(PaymentHistory({ timestamp: follow.lastPaymentTimestamp, amount: follow.lastPaymentAmount }));
+    _profilesExtra[profileId].paymentHistory.push(PaymentHistory({ timestamp: follow.lastPaymentTimestamp, amount: follow.lastPaymentAmount, followerAddress: followerAddress }));
 
     _profiles[profileId].followers[followerAddress] = follow;
   }
