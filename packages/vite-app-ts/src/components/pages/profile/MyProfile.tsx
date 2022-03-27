@@ -94,11 +94,11 @@ export const MyProfile: FC = () => {
                       </div>
                       <div className="text-m columns-1"> Last Payed date</div>
                       <div className="font-light text-m columns-2 col-span-2">
-                        {new Date(follower.lastPaymentTimestamp?.toString()).toLocaleDateString()}
+                        {new Date(follower?.lastPaymentTimestamp?.toString() ?? '').toLocaleDateString()}
                       </div>
                       <div className="text-m columns-1"> Is Active</div>
                       <div className="font-light text-m columns-2 col-span-2">
-                        {follower?.isActive.toString() === 'true' ? 'Yes' : 'No'}
+                        {follower?.isActive?.toString() === 'true' ? 'Yes' : 'No'}
                       </div>
                     </div>
                   </>
