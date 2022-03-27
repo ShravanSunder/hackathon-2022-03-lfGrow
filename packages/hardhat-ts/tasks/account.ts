@@ -7,7 +7,7 @@ import { DEBUG, config } from '../hardhat.config';
 import { getMnemonic, mnemonicPath } from './functions/mnemonic';
 
 task('account', 'Get balance informations for the deployment account.', async (_, hre) => {
-  const { address } = await getAccountData(getMnemonic(), hre);
+  const { address } = await getAccountData(getMnemonic());
 
   const qrcode = require('qrcode-terminal');
   qrcode.generate(address);

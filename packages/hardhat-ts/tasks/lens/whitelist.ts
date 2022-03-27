@@ -5,6 +5,8 @@ import followModule from '../../generated/deployments/localhost/PatronFollowModu
 import { ProtocolState, waitForTx, initEnv, getAddrs } from '../helpers/utils';
 
 task('whitelist-follow-module', 'unpauses the protocol').setAction(async ({ address }: { address: string }, hre) => {
+  await hre.run('unpause');
+
   const [governance] = await initEnv(hre);
   const addrs = getAddrs();
   const lensHub: LensHub = LensHub__factory.connect(addrs['lensHub proxy'], governance);

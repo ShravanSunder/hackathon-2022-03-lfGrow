@@ -2,16 +2,17 @@ import fs from 'fs';
 
 import { DeployFunction } from 'hardhat-deploy/types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { initEnv } from 'tasks/helpers/utils';
 
 import lensAddresses from '../addresses.json';
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { getNamedAccounts, deployments } = hre;
   const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+  const [governance, , user] = await initEnv(hre);
   await deploy('PatronFollowModule', {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
+    from: governance.address,
     // see https://docs.lens.dev/docs/testnet-addresses#mumbai-testnet-addresses
     args: [lensAddresses['lensHub proxy']],
     log: true,
